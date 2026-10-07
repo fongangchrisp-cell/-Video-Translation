@@ -1,0 +1,23 @@
+# Local installations and Python artifacts
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+
+# Videos, model weights and generated creator content belong outside Git
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.wav
+*.srt
+*.cliptranslate.json
+models/
+outputs/
+pilot_data/
+.DS_Store
