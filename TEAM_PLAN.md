@@ -1,4 +1,4 @@
-# ClipTranslate: small-team plan for the ten-creator pilot
+# BCX (Black Cortex) — ClipTranslate: small-team plan for the ten-creator pilot
 
 ## The goal we are staffing for
 

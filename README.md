@@ -1,4 +1,7 @@
+<p align="center"><img src="docs/bcx-logo.png" alt="BCX — Black Cortex" width="160"></p>
+
 # ClipTranslate — short-video subtitle pilot
+**A BCX (Black Cortex) project.** Vision and roadmap: [VISION.md](VISION.md).
 
 A **local desktop MVP** for creators translating **their own short French-language videos into English subtitles**. Select a clip, generate timed English captions, correct the text and timing, preview alongside the video, and export both a UTF-8 `.srt` and an MP4 with burned-in captions.
 
@@ -61,4 +64,4 @@ python -m pytest -q
 
 The automated tests exercise timestamp/SRT rules, caption splitting, project persistence, the FFmpeg audio/export path (they check that burned-in captions really appear, in landscape and vertical video), cancellation, a headless GUI smoke test and the scorecard report. The transcription pipeline runs against a fake model; they do not download model weights. **Actual AI quality and video playback in the window have still never been verified**; check them on a desktop with the model installed. GUI tests skip themselves where Qt's system libraries are missing.
 
-See [PILOT.md](PILOT.md) for the ten-creator validation plan and [TEAM_PLAN.md](TEAM_PLAN.md) for suggested group roles and working agreements, and [WORKPLAN.md](WORKPLAN.md) for the 8-person schedule, [AUDIT.md](AUDIT.md) for known risks, and [LEGAL_CHECKLIST.md](LEGAL_CHECKLIST.md) before taking any payment.
+See [PILOT.md](PILOT.md) for the ten-creator validation plan and [TEAM_PLAN.md](TEAM_PLAN.md) for suggested group roles and working agreements, and [WORKPLAN.md](WORKPLAN.md) for the 8-person schedule, [AUDIT.md](AUDIT.md) for known risks, [VISION.md](VISION.md) for where BCX is going, and [LEGAL_CHECKLIST.md](LEGAL_CHECKLIST.md) before taking any payment.

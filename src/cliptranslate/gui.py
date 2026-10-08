@@ -8,7 +8,7 @@ import tempfile
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QThread, QUrl, Signal
-from PySide6.QtGui import QColor, QDesktopServices
+from PySide6.QtGui import QColor, QDesktopServices, QPixmap
 from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtWidgets import (
@@ -152,7 +152,7 @@ class ExportWorker(QThread):
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("ClipTranslate  •  French → English")
+        self.setWindowTitle("BCX Black Cortex  •  ClipTranslate  •  French → English")
         screen = QApplication.primaryScreen()
         available = screen.availableGeometry().height() - 60 if screen else 860
         self.resize(1180, max(560, min(860, available)))
@@ -185,8 +185,22 @@ class MainWindow(QMainWindow):
         header.setObjectName("header")
         header_row = QHBoxLayout(header)
         header_row.setContentsMargins(20, 14, 20, 14)
+        logo_file = Path(__file__).parent / "assets" / "bcx-logo.png"
+        logo_pixmap = QPixmap(str(logo_file))
+        if not logo_pixmap.isNull():
+            logo = QLabel()
+            logo.setPixmap(
+                logo_pixmap.scaled(
+                    72,
+                    72,
+                    Qt.AspectRatioMode.KeepAspectRatio,
+                    Qt.TransformationMode.SmoothTransformation,
+                )
+            )
+            logo.setToolTip("BCX — Black Cortex")
+            header_row.addWidget(logo)
         title_box = QVBoxLayout()
-        eyebrow = QLabel("CREATOR PILOT  /  DESKTOP")
+        eyebrow = QLabel("BCX  ·  BLACK CORTEX  /  CREATOR PILOT")
         eyebrow.setObjectName("eyebrow")
         title_box.addWidget(eyebrow)
         title = QLabel("ClipTranslate")
@@ -422,29 +436,29 @@ class MainWindow(QMainWindow):
         self.player.errorOccurred.connect(self._media_error)
 
         self.setStyleSheet("""
-            QWidget { background: #0b1422; color: #e7eff7; font-size: 13px; }
+            QWidget { background: #05070a; color: #e7eff7; font-size: 13px; }
             QLabel, QCheckBox, QSlider { background: transparent; }
-            QFrame#header { background: #15263a; border: 1px solid #29455d; border-radius: 14px; }
-            QFrame#card { background: #111f30; border: 1px solid #263c52; border-radius: 12px; }
+            QFrame#header { background: #0b1219; border: 1px solid #1d3140; border-radius: 14px; }
+            QFrame#card { background: #0a0f15; border: 1px solid #1a2a38; border-radius: 12px; }
             QLabel#eyebrow { color: #69dac1; font-size: 11px; font-weight: bold; letter-spacing: 1px; }
             QLabel#title { font-size: 24px; font-weight: bold; }
             QLabel#sectionTitle { font-size: 17px; font-weight: bold; }
             QLabel#muted { color: #9eb1c2; }
-            QLabel#badge { color: #8ef1d4; background: #173e41; padding: 9px 13px; border-radius: 11px; font-weight: bold; }
+            QLabel#badge { color: #8ef1d4; background: #0c2a2a; padding: 9px 13px; border-radius: 11px; font-weight: bold; }
             QLabel#file { color: #d8e8f3; }
-            QLabel#previewText { background: #172d3c; border-radius: 8px; color: white; padding: 8px; font-weight: bold; }
-            QPushButton { background: #1c354b; border: 1px solid #33546a; border-radius: 7px; padding: 8px 13px; }
-            QPushButton:hover { background: #284e66; }
+            QLabel#previewText { background: #0d1a22; border-radius: 8px; color: white; padding: 8px; font-weight: bold; }
+            QPushButton { background: #101c27; border: 1px solid #26404f; border-radius: 7px; padding: 8px 13px; }
+            QPushButton:hover { background: #173041; }
             QPushButton#primary { background: #3cc9aa; border-color: #3cc9aa; color: #09202a; font-weight: bold; }
             QPushButton#primary:hover { background: #6be1c5; }
             QPushButton:disabled { color: #8192a0; background: #1b2b3a; border-color: #304151; }
             QLineEdit, QPlainTextEdit, QComboBox, QTableWidget {
-                background: #0d1a2a; border: 1px solid #345066; border-radius: 6px; padding: 5px;
+                background: #070b10; border: 1px solid #233a49; border-radius: 6px; padding: 5px;
                 selection-background-color: #256c74;
             }
-            QTableWidget { gridline-color: #263b4f; alternate-background-color: #122336; }
-            QHeaderView::section { background: #20354a; color: #c3d6e3; border: 0; padding: 8px; }
-            QProgressBar { border: 0; background: #264053; border-radius: 3px; }
+            QTableWidget { gridline-color: #1a2a38; alternate-background-color: #0c131b; }
+            QHeaderView::section { background: #13202c; color: #c3d6e3; border: 0; padding: 8px; }
+            QProgressBar { border: 0; background: #16262f; border-radius: 3px; }
             QProgressBar::chunk { background: #42cfaf; border-radius: 3px; }
         """)
 
@@ -632,7 +646,9 @@ class MainWindow(QMainWindow):
         self.project_path = None
         self.processing_seconds = 0.0
         self.player.setSource(QUrl.fromLocalFile(str(video.path)))
-        self.setWindowTitle("ClipTranslate  •  DEMO MODE (invented sample captions)")
+        self.setWindowTitle(
+            "BCX Black Cortex  •  ClipTranslate  •  DEMO MODE (invented sample captions)"
+        )
         self.file_label.setText(
             "DEMO: synthetic test clip with invented captions. This is not a real translation."
         )

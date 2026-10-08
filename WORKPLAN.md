@@ -1,4 +1,4 @@
-# Work plan for 8 part-time people
+# BCX (Black Cortex) — work plan for 8 part-time people
 
 **Goal (unchanged):** ten creators translate their own short French videos into English subtitles, like the result, and pay more than the full cost of producing it. Desktop, French→English, subtitles only.
 
