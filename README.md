@@ -4,6 +4,8 @@ A **local desktop MVP** for creators translating **their own short French-langua
 
 This is a focused ten-creator validation experiment, **not** a service for arbitrary movies or languages. It has no dubbing, voice cloning, lip-sync, accounts, uploads, billing, or promise of professional-grade translation. Human review is required before sharing.
 
+> **Just want to try it?** Follow [QUICKSTART.md](QUICKSTART.md) (VS Code, with a demo mode that needs no model download).
+
 ## Install and run
 
 Requirements: Python **3.10–3.12**, a Windows/macOS/Linux **desktop with a graphical display**, adequate memory/disk for a speech model, and internet access **once** to download the model. In particular, minimal headless Linux containers may lack Qt's `libGL`/display libraries; run the GUI on a normal desktop. A CPU is sufficient but processing can take several minutes.

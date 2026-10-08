@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ClipTranslate (real: choose your own video)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "cliptranslate",
+      "justMyCode": true
+    },
+    {
+      "name": "ClipTranslate DEMO (sample clip, no model download)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "cliptranslate",
+      "args": ["--demo"],
+      "justMyCode": true
+    },
+    {
+      "name": "Pilot report (pilot_data/scorecard.csv)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "cliptranslate.pilot_report",
+      "args": ["pilot_data/scorecard.csv"],
+      "console": "integratedTerminal"
+    }
+  ]
+}

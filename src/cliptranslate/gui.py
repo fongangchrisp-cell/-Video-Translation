@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import argparse
 import sys
+import tempfile
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QThread, QUrl, Signal
@@ -27,6 +29,7 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QPlainTextEdit,
     QProgressBar,
+    QScrollArea,
     QPushButton,
     QSlider,
     QSplitter,
@@ -45,6 +48,7 @@ from .core import (
     timecode,
     validate_captions,
 )
+from .demo import create_demo_clip, demo_captions
 from .diagnostics import get_logger, log_dir, setup_logging
 from .media import export_video, probe_video, save_srt
 from .pipeline import ProcessingResult, translate_clip
@@ -149,8 +153,10 @@ class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("ClipTranslate  •  French → English")
-        self.resize(1180, 780)
-        self.setMinimumSize(930, 660)
+        screen = QApplication.primaryScreen()
+        available = screen.availableGeometry().height() - 60 if screen else 860
+        self.resize(1180, max(560, min(860, available)))
+        self.setMinimumWidth(930)  # Height follows the layout so nothing overlaps.
         self.video: VideoInfo | None = None
         self.project_path: Path | None = None
         self.processing_seconds = 0.0
@@ -168,7 +174,12 @@ class MainWindow(QMainWindow):
         outer = QVBoxLayout(root)
         outer.setContentsMargins(22, 20, 22, 20)
         outer.setSpacing(14)
-        self.setCentralWidget(root)
+        # Scroll on small screens instead of squeezing or overlapping controls.
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+        scroll.setWidget(root)
+        self.setCentralWidget(scroll)
 
         header = QFrame()
         header.setObjectName("header")
@@ -296,6 +307,7 @@ class MainWindow(QMainWindow):
         self.table.setColumnWidth(2, 115)
         self.table.currentCellChanged.connect(self._row_changed)
         self.table.itemChanged.connect(self._item_changed)
+        self.table.setMinimumHeight(150)
         captions_layout.addWidget(self.table, 1)
 
         edit_label = QLabel("EDIT SELECTED LINE")
@@ -303,14 +315,14 @@ class MainWindow(QMainWindow):
         captions_layout.addWidget(edit_label)
         self.english_edit = QPlainTextEdit()
         self.english_edit.setPlaceholderText("English subtitle text…")
-        self.english_edit.setFixedHeight(76)
+        self.english_edit.setFixedHeight(64)
         self.english_edit.textChanged.connect(self._editor_changed)
         captions_layout.addWidget(self.english_edit)
         self.french_label = QLabel("")
         self.french_label.setObjectName("muted")
         self.french_label.setTextFormat(Qt.TextFormat.PlainText)
         self.french_label.setWordWrap(True)
-        self.french_label.setMinimumHeight(34)
+        self.french_label.setMinimumHeight(22)
         captions_layout.addWidget(self.french_label)
         time_row = QHBoxLayout()
         time_row.addWidget(QLabel("Start"))
@@ -411,6 +423,7 @@ class MainWindow(QMainWindow):
 
         self.setStyleSheet("""
             QWidget { background: #0b1422; color: #e7eff7; font-size: 13px; }
+            QLabel, QCheckBox, QSlider { background: transparent; }
             QFrame#header { background: #15263a; border: 1px solid #29455d; border-radius: 14px; }
             QFrame#card { background: #111f30; border: 1px solid #263c52; border-radius: 12px; }
             QLabel#eyebrow { color: #69dac1; font-size: 11px; font-weight: bold; letter-spacing: 1px; }
@@ -559,7 +572,7 @@ class MainWindow(QMainWindow):
                 item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 item.setData(FRENCH_ROLE, caption.french)
             self.table.setItem(row, column, item)
-        self.table.setRowHeight(row, 56)
+        self.table.setRowHeight(row, 46)
         self._style_caption(row)
 
     def _style_caption(self, row: int) -> None:
@@ -610,6 +623,27 @@ class MainWindow(QMainWindow):
             self.french_label.setText(f"French heard: {french}" if french else "")
         finally:
             self._syncing = False
+
+    def load_demo(self) -> None:
+        """Open a synthetic clip with invented captions (no model needed) to try the editor."""
+        self._demo_dir = tempfile.TemporaryDirectory(prefix="cliptranslate-demo-")
+        video = create_demo_clip(Path(self._demo_dir.name))
+        self.video = video
+        self.project_path = None
+        self.processing_seconds = 0.0
+        self.player.setSource(QUrl.fromLocalFile(str(video.path)))
+        self.setWindowTitle("ClipTranslate  •  DEMO MODE (invented sample captions)")
+        self.file_label.setText(
+            "DEMO: synthetic test clip with invented captions. This is not a real translation."
+        )
+        self.rights.setChecked(True)
+        self._set_captions(demo_captions())
+        self.dirty = False
+        self.progress_label.setText(
+            "Demo mode. Try editing, splitting, merging, saving a draft and exporting. "
+            "Choose your own video for a real translation."
+        )
+        self._refresh_buttons()
 
     def _french_at(self, row: int) -> str:
         item = self.table.item(row, 0)
@@ -1166,11 +1200,22 @@ class MainWindow(QMainWindow):
         super().closeEvent(event)
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(
+        prog="cliptranslate", description="French to English subtitles for short videos."
+    )
+    parser.add_argument(
+        "--demo",
+        action="store_true",
+        help="open a synthetic sample clip with invented captions (no model download)",
+    )
+    options, qt_args = parser.parse_known_args(sys.argv[1:] if argv is None else argv)
     setup_logging()
-    log.info("ClipTranslate started")
-    app = QApplication(sys.argv)
+    log.info("ClipTranslate started (demo=%s)", options.demo)
+    app = QApplication([sys.argv[0], *qt_args])
     app.setStyle("Fusion")
     window = MainWindow()
     window.show()
+    if options.demo:
+        window.load_demo()
     sys.exit(app.exec())

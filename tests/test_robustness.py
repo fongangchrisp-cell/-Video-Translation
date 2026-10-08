@@ -240,3 +240,15 @@ def test_log_file_is_created_and_never_holds_caption_text(tmp_path, monkeypatch)
         handler.close()
         logger.removeHandler(handler)
     assert "hello from the test" in path.read_text(encoding="utf-8")
+
+
+def test_demo_clip_and_captions_are_exportable(tmp_path: Path):
+    from cliptranslate.demo import create_demo_clip, demo_captions
+    from cliptranslate.core import validate_captions
+
+    video = create_demo_clip(tmp_path)
+    captions = demo_captions()
+    validate_captions(captions, video.duration)
+    assert all(caption.french for caption in captions)
+    mp4, srt = export_video(video, captions, tmp_path / "demo_out.mp4")
+    assert mp4.stat().st_size > 1000 and "Hello everyone" in srt.read_text(encoding="utf-8")

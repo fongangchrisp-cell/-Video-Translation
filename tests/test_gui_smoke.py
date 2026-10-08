@@ -110,3 +110,14 @@ def test_translate_worker_reports_cancellation(app, monkeypatch):
     worker.request_cancel()
     worker.run()
     assert seen == ["cancelled"]
+
+
+def test_demo_mode_loads_without_a_model(app):
+    win = gui.MainWindow()
+    win.load_demo()
+    assert win.table.rowCount() == 6
+    assert win.video is not None and win.rights.isChecked()
+    assert "Bonjour" in win.french_label.text()
+    assert "DEMO" in win.windowTitle()
+    assert not win.dirty
+    win.close()
