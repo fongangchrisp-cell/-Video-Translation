@@ -1,0 +1,28 @@
+1
+00:00:00,500 --> 00:00:03,500
+Hello everyone, and welcome back to the
+channel.
+
+2
+00:00:03,500 --> 00:00:07,000
+Today I'm going to show you how I make my
+videos.
+
+3
+00:00:07,000 --> 00:00:10,500
+First, I write a short script in French.
+
+4
+00:00:10,500 --> 00:00:14,000
+Then I record it with my phone, in good
+light.
+
+5
+00:00:14,000 --> 00:00:18,000
+This one line was missed by the machine,
+so a person has to check it.
+
+6
+00:00:18,000 --> 00:00:22,500
+Thanks for watching, and see you in the
+next video!
