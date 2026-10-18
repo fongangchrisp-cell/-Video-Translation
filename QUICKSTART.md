@@ -1,5 +1,7 @@
 # BCX ClipTranslate: get it and run it (step by step)
 
+> **Not a programmer?** Use [START-HERE.md](START-HERE.md) instead: a ready-made app and one-click launchers. This page is for people who will work on the code in VS Code.
+
 <img src="docs/bcx-logo.png" alt="BCX Black Cortex" width="120" align="right">
 
 ![The editor in demo mode](docs/prototype-demo.png)

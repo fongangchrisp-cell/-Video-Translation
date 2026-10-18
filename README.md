@@ -7,7 +7,7 @@ A **local desktop MVP** for creators translating **their own short French-langua
 
 This is a focused ten-creator validation experiment, **not** a service for arbitrary movies or languages. It has no dubbing, voice cloning, lip-sync, accounts, uploads, billing, or promise of professional-grade translation. Human review is required before sharing.
 
-> **Just want to try it?** Follow [QUICKSTART.md](QUICKSTART.md) (VS Code, with a demo mode that needs no model download).
+> **Just want to open it?** Read [START-HERE.md](START-HERE.md): a ready-made app, or a double-click launcher (`Start-BCX.bat`, `Start-BCX.command`, `start-bcx.sh`). Developers: [QUICKSTART.md](QUICKSTART.md) (VS Code, with a demo mode that needs no model download).
 
 ## Install and run
 

@@ -32,3 +32,8 @@ A tick-box in the app is **not** permission. Keep signed forms outside Git in `p
 ## 4. Before a public launch (not the pilot)
 
 Licence review of every dependency, a privacy notice, terms of service, and a decision on whether you really want to process other people's content at scale.
+
+
+## Update: tester builds
+
+GitHub Actions now builds a Windows and a macOS app (`.github/workflows/build-app.yml`) that bundles FFmpeg from `imageio-ffmpeg`. These builds are for **BCX team testing only** (artifacts need a GitHub login and expire after 30 days). Do **not** hand them to creators or publish them until the FFmpeg licence (GPL build) and the Whisper model licence questions above are resolved by a qualified reviewer.
