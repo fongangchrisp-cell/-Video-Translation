@@ -1,0 +1,78 @@
+name: Build desktop app
+
+# Builds a double-click application (no Python needed) for Windows and macOS.
+# Run it from GitHub: Actions -> "Build desktop app" -> Run workflow.
+# It also runs when packaging files change, and when a tag like v0.1.0 is pushed.
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+    paths:
+      - "packaging/**"
+      - ".github/workflows/build-app.yml"
+      - "Start-BCX.bat"
+      - "start-bcx.sh"
+
+jobs:
+  build:
+    name: Build for ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: Windows
+            sep: ";"
+          - os: macos-latest
+            name: macOS
+            sep: ":"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install the app and the packager
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . pyinstaller
+      - name: Test the launcher script (setup step only)
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            cmd //c "Start-BCX.bat setup"
+          else
+            ./start-bcx.sh setup
+          fi
+      - name: Build the application
+        run: >
+          pyinstaller packaging/entry.py --noconfirm --clean --windowed --name BCX-ClipTranslate
+          --paths src
+          --collect-all faster_whisper --collect-all ctranslate2 --collect-all imageio_ffmpeg
+          --collect-all onnxruntime --collect-data cliptranslate
+          --hidden-import PySide6.QtMultimedia --hidden-import PySide6.QtMultimediaWidgets
+      - name: Smoke-test the BUILT app (Qt + speech library + FFmpeg subtitles)
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            ./dist/BCX-ClipTranslate/BCX-ClipTranslate.exe --smoke-test > smoke.txt 2>&1 || true
+          else
+            ./dist/BCX-ClipTranslate.app/Contents/MacOS/BCX-ClipTranslate --smoke-test > smoke.txt 2>&1 || true
+          fi
+          cat smoke.txt
+          grep -q "SMOKE TEST OK" smoke.txt
+      - name: Zip it
+        shell: bash
+        run: |
+          mkdir -p release
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            powershell -Command "Compress-Archive -Path dist/BCX-ClipTranslate -DestinationPath release/BCX-ClipTranslate-Windows.zip"
+          else
+            ditto -c -k --sequesterRsrc --keepParent dist/BCX-ClipTranslate.app release/BCX-ClipTranslate-macOS.zip
+          fi
+          ls -la release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BCX-ClipTranslate-${{ matrix.name }}
+          path: release/*.zip
+          retention-days: 30
