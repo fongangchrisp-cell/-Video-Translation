@@ -6,6 +6,7 @@ name: Build desktop app
 on:
   workflow_dispatch:
   push:
+    branches: ["arena/**"]
     tags: ["v*"]
     paths:
       - "packaging/**"
