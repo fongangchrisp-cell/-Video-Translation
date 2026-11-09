@@ -1,5 +1,52 @@
 # Brutal audit — ClipTranslate pilot (most to least important)
 
+## Second audit (2026-10-11, commit `fbbb958`)
+
+**Verdict in one line:** the *delivery* is now good for a prototype (it builds, it launches, it is tested on three operating systems). The *product* is exactly as unproven as before: **nobody has put a real French video through the real model and judged the English.** Everything below follows from that.
+
+**What I actually checked this time:** ran Ruff (clean) and the 39 non-GUI tests locally (pass); read the GitHub results for the latest commit (full suite on Linux, Windows, macOS: pass; both app builds with self-check: pass); read the translation code; checked links, line endings and the ZIP that GitHub serves; looked for secrets (none) and for what the logs record (file names only, no speech text). **What I could not check:** the real model (Hugging Face is unreachable from my environment), video playback, and the app on a real Windows or Mac screen.
+
+### P0 — fix or decide before anything else
+
+| # | Finding | Why it matters | What to do |
+| --- | --- | --- | --- |
+| A1 | **The core promise is untested.** No real clip has gone through the real model. | Translation quality, speed and memory use are all unknown. All tests use a fake model. | Run 3 rights-owned French clips on a real PC (`docs/EVALUATE.md`). Do this before more features. |
+| A2 | **`main` was empty.** The app lived only on a working branch, so the GitHub front page showed nothing and a default ZIP/clone gave an empty project. | You already hit this confusion. | Merge the branch into `main` (see the pull request). |
+| A3 | **No LICENSE file, and the repository is public.** Public with no licence means nobody may legally reuse the code. It also publishes your strategy: `VISION.md`, `WORKPLAN.md`, `TEAM_PLAN.md`, `PILOT.md` and `LEGAL_CHECKLIST.md` are readable by anyone, including competitors. | A business risk, and a legal one. I did not choose a licence for you; that is your decision. | Decide: **private** repo with the 8 members added (my recommendation while you validate), or public with a chosen licence. Free build minutes are smaller on private repos, and Windows and macOS builds use them faster. |
+| A4 | **Nobody has run it on a real desktop.** GitHub's checks start the app offscreen; that proves it starts, not that it feels right. | Windows warnings, fonts, playback, slow disks. | One teammate on Windows, one on a Mac, screenshots of what they see. |
+| A5 | **Translation method is a quality gamble.** The app asks Whisper to translate French speech straight to English, with the `small` model, on CPU. Whisper-family models can invent or repeat text over silence, music and noise. The code leaves `condition_on_previous_text` at its default, which is a known cause of repeated lines. | The product *is* this quality. | Measure first. Then run a small experiment: setting that option to off, a bigger model, and transcribe-then-translate, scored by a bilingual reviewer on the same clips. |
+| A6 | **Cameroonian-accent French, slang, code-switching with English or local languages are untested.** | Likely your real audience. | Put at least 2 such clips in the first test. |
+
+### P1 — will bite soon
+
+| # | Finding | What to do |
+| --- | --- | --- |
+| B1 | **Dependencies are not pinned.** Between two of my runs `imageio-ffmpeg` changed version and the bundled FFmpeg with it. A build that works today can break next month. | Add a lock file once the first real test passes. |
+| B2 | **The install is large:** about 1.2 GB for the environment (PySide6 brings Qt web and PDF parts we do not use), plus the model download (several hundred MB). On slow or expensive connections that is a real barrier. | Pre-download once and share the model folder inside the team; consider a smaller Qt install later. |
+| B3 | **First-run model download comes from Hugging Face with no pinned version.** It fails on blocked or unstable networks, and the download cannot be resumed from the app screen. | Document an offline copy method after the first real test. |
+| B4 | **Built apps are unsigned**, so Windows shows "Windows protected your PC" and macOS blocks them at first. Mac build is **Apple-chip only**. Downloads expire after 30 days. | Acceptable for the team. Signing costs money every year; only after creators validate. |
+| B5 | **The built apps bundle a GPL build of FFmpeg.** Fine inside the team; not for creators or the public until a qualified person has reviewed `LEGAL_CHECKLIST.md`. | Keep the tester-only rule. |
+| B6 | **`gui.py` is 1,237 lines**; GUI behaviour is covered only by smoke tests. Every new feature makes it harder to change safely. | Split it when you start adding features by hand (the work you are about to do in VS Code). |
+| B7 | **Limits are hard-coded:** 120 s and 500 MB per clip, first audio track only. Reasonable for the pilot, but a creator with a longer or two-language clip will hit a wall. | Keep; tell creators up front. |
+
+### P2 — tidy later
+
+- **Documentation sprawl:** 10 Markdown files with overlap. I fixed two stale statements (install size, "CI never ran"); the "Status after the fix pass" table below is from the earlier commit and still says 40 tests.
+- The hyphenated repository name (`-Video-Translation`) still trips some tools; rename on GitHub when convenient.
+- GitHub Actions shows a Node 20 deprecation warning. Harmless today; bump the action versions later.
+- Log files hold video **file names**, not speech text. Fine, but tell creators.
+
+### What is genuinely good
+- Safe by design: local processing, no uploads, no keys, refuses invalid or oversized files, drafts survive moves, cancel works.
+- Human review is built in: the French heard is shown beside each English line.
+- Launching works three ways and is checked automatically on Windows, macOS and Linux.
+- Scope discipline: still FR→EN subtitles for short clips. No feature creep.
+
+### Strategy check (unchanged, still the real risk)
+The code is not what decides this project. Ten creators paying more than the full cost is. Until the first test, every extra feature is a guess.
+
+---
+
 ## Status after the fix pass (2026-10-07)
 
 | # | Finding | Status |

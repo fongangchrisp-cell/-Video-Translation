@@ -8,7 +8,7 @@
 
 *Demo mode: invented captions on a synthetic clip. The video pane is empty in this screenshot only because it was taken on a server without video playback. On your computer the clip plays there.*
 
-**Time needed:** about 15 minutes the first time. **You need:** a Windows, macOS or Linux computer with a screen, an internet connection, and about 1 GB of free disk space.
+**Time needed:** about 15 minutes the first time. **You need:** a Windows, macOS or Linux computer with a screen, an internet connection, and about 3 GB of free disk space (the app environment alone is about 1.2 GB, plus the speech model).
 
 ---
 

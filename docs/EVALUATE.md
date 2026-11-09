@@ -51,6 +51,6 @@ Also write down: your operating system, RAM, clip length, time taken, and any er
 
 - Translation quality of the real speech model on real French (the model could not be downloaded in the build environment).
 - Video playback inside the window (no playback backend in the build environment).
-- Windows and macOS behaviour (CI is set up but has never run on GitHub).
+- Windows and macOS behaviour by a real person. GitHub's automatic tests pass on Windows, macOS and Linux, and the built apps start and export in a self-check, but nobody has used them on a real desktop yet.
 - African-accent French, noisy audio and slang.
 - Whether anyone will pay. That is what the ten-creator pilot in `PILOT.md` is for.
